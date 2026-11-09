@@ -1,0 +1,778 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CAMPUS.LIVE | College Management</title>
+
+<style>
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: Arial, sans-serif;
+}
+
+body {
+  background: #0b0b15;
+  color: #f5f3ff;
+  min-height: 100vh;
+}
+
+header {
+  height: 75px;
+  background: #141322;
+  border-bottom: 1px solid #302944;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 5%;
+}
+
+.logo {
+  font-size: 23px;
+  font-weight: bold;
+  color: #b99aff;
+  letter-spacing: 1px;
+}
+
+.logo span {
+  color: white;
+}
+
+select, button {
+  padding: 11px 14px;
+  border-radius: 8px;
+  border: 1px solid #40355c;
+  background: #211d32;
+  color: white;
+  cursor: pointer;
+}
+
+.container {
+  display: flex;
+  min-height: calc(100vh - 75px);
+}
+
+.sidebar {
+  width: 235px;
+  background: #12111f;
+  padding: 28px 18px;
+  border-right: 1px solid #302944;
+}
+
+.sidebar h3 {
+  color: #9289a9;
+  font-size: 12px;
+  margin-bottom: 20px;
+  letter-spacing: 2px;
+}
+
+.nav {
+  padding: 14px;
+  margin-bottom: 9px;
+  border-radius: 8px;
+  cursor: pointer;
+  color: #c7c0d8;
+}
+
+.nav:hover, .nav.active {
+  background: #302448;
+  color: #c5a4ff;
+}
+
+main {
+  flex: 1;
+  padding: 35px;
+  min-width: 0;
+}
+
+.welcome {
+  margin-bottom: 28px;
+}
+
+.welcome h1 {
+  font-size: 29px;
+  margin-bottom: 9px;
+}
+
+.muted {
+  color: #9d96ad;
+}
+
+.cards {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(130px, 1fr));
+  gap: 16px;
+  margin-bottom: 30px;
+}
+
+.card {
+  background: #171526;
+  border: 1px solid #302944;
+  border-radius: 13px;
+  padding: 22px;
+}
+
+.card p {
+  color: #aaa2bb;
+  font-size: 13px;
+  margin-bottom: 15px;
+}
+
+.card h2 {
+  font-size: 28px;
+  color: #c3a2ff;
+}
+
+.section {
+  background: #171526;
+  border: 1px solid #302944;
+  padding: 23px;
+  border-radius: 13px;
+  margin-bottom: 23px;
+}
+
+.section h2 {
+  font-size: 19px;
+  margin-bottom: 20px;
+}
+
+.filters {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-bottom: 20px;
+}
+
+.filters select {
+  min-width: 145px;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  min-width: 560px;
+}
+
+.table-wrap {
+  overflow-x: auto;
+}
+
+th, td {
+  text-align: left;
+  padding: 15px 12px;
+  border-bottom: 1px solid #302944;
+  font-size: 13px;
+}
+
+th {
+  color: #a99dbd;
+}
+
+.status {
+  padding: 6px 10px;
+  border-radius: 20px;
+  font-size: 11px;
+  background: #302448;
+  color: #c6a7ff;
+}
+
+.live {
+  background: #153d31;
+  color: #6de0ae;
+}
+
+.pending {
+  background: #49371b;
+  color: #ffd17c;
+}
+
+.action {
+  background: #8052d6;
+  border: none;
+  margin: 3px;
+}
+
+.action:hover {
+  background: #9a6aef;
+}
+
+.secondary {
+  background: #302448;
+}
+
+button:disabled {
+  opacity: .4;
+  cursor: not-allowed;
+}
+
+.notice {
+  background: #201a34;
+  border-left: 3px solid #a77aff;
+  padding: 15px;
+  margin-bottom: 12px;
+  border-radius: 5px;
+  color: #d7c9f3;
+  font-size: 13px;
+}
+
+.hidden {
+  display: none !important;
+}
+
+#message {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  background: #302448;
+  border: 1px solid #a77aff;
+  padding: 15px 20px;
+  border-radius: 9px;
+  display: none;
+  z-index: 10;
+}
+
+@media(max-width: 850px) {
+  .cards {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  .sidebar {
+    width: 175px;
+  }
+  main {
+    padding: 20px;
+  }
+}
+
+@media(max-width: 550px) {
+  .container {
+    display: block;
+  }
+  .sidebar {
+    width: 100%;
+    display: flex;
+    overflow-x: auto;
+    padding: 10px;
+  }
+  .sidebar h3 {
+    display: none;
+  }
+  .nav {
+    white-space: nowrap;
+    margin: 0 4px;
+  }
+  header {
+    padding: 0 15px;
+  }
+  .logo {
+    font-size: 18px;
+  }
+  main {
+    padding: 16px;
+  }
+}
+</style>
+</head>
+
+<body>
+
+<header>
+  <div class="logo">CAMPUS<span>.LIVE</span></div>
+  <select id="role" onchange="changeRole()">
+    <option value="Principal">Principal / Admin</option>
+    <option value="HOD">HOD</option>
+    <option value="Teacher">Teacher</option>
+  </select>
+</header>
+
+<div class="container">
+
+<aside class="sidebar">
+  <div>
+    <h3>MAIN MENU</h3>
+    <div class="nav active" onclick="showPage('dashboard',this)">▦ Dashboard</div>
+    <div class="nav" onclick="showPage('classrooms',this)">▣ Classrooms</div>
+    <div class="nav" onclick="showPage('timetable',this)">▤ Timetables</div>
+    <div class="nav" onclick="showPage('swaps',this)">⇄ Lecture Swaps</div>
+    <div class="nav" onclick="showPage('notifications',this)">♢ Notifications</div>
+  </div>
+</aside>
+
+<main>
+
+<!-- DASHBOARD -->
+
+<div id="dashboard" class="page">
+
+<div class="welcome">
+  <h1>Welcome to CAMPUS.LIVE</h1>
+  <p class="muted" id="welcomeText">
+    Your college, connected in real time.
+  </p>
+</div>
+
+<div class="cards">
+  <div class="card">
+    <p>Departments</p>
+    <h2>6</h2>
+  </div>
+  <div class="card">
+    <p>Divisions</p>
+    <h2>18</h2>
+  </div>
+  <div class="card">
+    <p>Live Lectures</p>
+    <h2 id="liveCount">0</h2>
+  </div>
+  <div class="card">
+    <p>Swap Requests</p>
+    <h2 id="swapCount">0</h2>
+  </div>
+</div>
+
+<div class="section">
+  <h2>Department Overview</h2>
+
+  <div class="filters">
+    <select id="department" onchange="render()">
+      <option>VLSI</option>
+      <option>Computer Engineering</option>
+      <option>Mechanical</option>
+      <option>Electrical</option>
+      <option>Civil</option>
+      <option>ENTC</option>
+    </select>
+
+    <select id="year" onchange="render()">
+      <option>First Year</option>
+      <option>Second Year</option>
+      <option>Third Year</option>
+      <option>Fourth Year</option>
+    </select>
+
+    <select id="division" onchange="render()">
+      <option>A</option>
+      <option>B</option>
+      <option>C</option>
+    </select>
+  </div>
+
+  <div class="notice" id="selection">
+    Selected: VLSI / First Year / Division A
+  </div>
+</div>
+
+<div class="section">
+  <h2>Current Lecture Status</h2>
+  <div id="currentLecture"></div>
+</div>
+
+</div>
+
+<!-- CLASSROOMS -->
+
+<div id="classrooms" class="page hidden">
+  <div class="welcome">
+    <h1>Classroom Management</h1>
+    <p class="muted">Monitor classroom activities.</p>
+  </div>
+
+  <div class="section">
+    <h2>Classroom Information</h2>
+    <div class="filters">
+      <select id="roomDept" onchange="renderRooms()">
+        <option>VLSI</option>
+        <option>Computer Engineering</option>
+        <option>Mechanical</option>
+        <option>Electrical</option>
+        <option>Civil</option>
+        <option>ENTC</option>
+      </select>
+    </div>
+    <div id="rooms"></div>
+  </div>
+</div>
+
+<!-- TIMETABLE -->
+
+<div id="timetable" class="page hidden">
+  <div class="welcome">
+    <h1>Division Timetable</h1>
+    <p class="muted">Built-in sample timetable.</p>
+  </div>
+
+  <div class="section">
+    <h2>Weekly Schedule</h2>
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>Time</th>
+            <th>Monday</th>
+            <th>Tuesday</th>
+            <th>Wednesday</th>
+            <th>Thursday</th>
+            <th>Friday</th>
+          </tr>
+        </thead>
+        <tbody id="timetableBody"></tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<!-- SWAPS -->
+
+<div id="swaps" class="page hidden">
+  <div class="welcome">
+    <h1>Lecture Swaps</h1>
+    <p class="muted">Request and manage teacher exchanges.</p>
+  </div>
+
+  <div class="section" id="requestSection">
+    <h2>Request a Lecture Swap</h2>
+
+    <div class="filters">
+      <select id="fromTeacher">
+        <option>Professor A</option>
+        <option>Professor B</option>
+        <option>Professor C</option>
+      </select>
+
+      <select id="toTeacher">
+        <option>Professor B</option>
+        <option>Professor C</option>
+        <option>Professor A</option>
+      </select>
+
+      <select id="swapDivision">
+        <option>Division A</option>
+        <option>Division B</option>
+        <option>Division C</option>
+      </select>
+    </div>
+
+    <button class="action" onclick="requestSwap()">
+      Submit Swap Request
+    </button>
+  </div>
+
+  <div class="section">
+    <h2>Swap Requests</h2>
+    <div id="swapRequests"></div>
+  </div>
+</div>
+
+<!-- NOTIFICATIONS -->
+
+<div id="notifications" class="page hidden">
+  <div class="welcome">
+    <h1>Notifications</h1>
+    <p class="muted">Recent college activity.</p>
+  </div>
+
+  <div class="section">
+    <div id="notificationList">
+      <p class="muted">No notifications yet.</p>
+    </div>
+  </div>
+</div>
+
+</main>
+</div>
+
+<div id="message"></div>
+
+<script>
+
+// SAMPLE COLLEGE DATA
+
+const lectures = [
+  {
+    department:"VLSI",
+    year:"First Year",
+    division:"A",
+    room:"204",
+    time:"09:00 - 10:00",
+    subject:"Engineering Mathematics",
+    teacher:"Professor A",
+    status:"Scheduled"
+  },
+  {
+    department:"VLSI",
+    year:"First Year",
+    division:"A",
+    room:"204",
+    time:"10:00 - 11:00",
+    subject:"Basic Electronics",
+    teacher:"Professor B",
+    status:"Scheduled"
+  },
+  {
+    department:"VLSI",
+    year:"Second Year",
+    division:"A",
+    room:"205",
+    time:"09:00 - 10:00",
+    subject:"Digital Electronics",
+    teacher:"Professor C",
+    status:"Scheduled"
+  },
+  {
+    department:"Computer Engineering",
+    year:"First Year",
+    division:"A",
+    room:"301",
+    time:"09:00 - 10:00",
+    subject:"Programming",
+    teacher:"Professor D",
+    status:"Scheduled"
+  }
+];
+
+let swaps = [];
+let notifications = [];
+
+let role = "Principal";
+let selectedLecture = null;
+
+function notify(text) {
+  notifications.unshift(text);
+  document.getElementById("notificationList").innerHTML =
+    notifications.map(n => <div class="notice">${n}</div>).join("");
+}
+
+function message(text) {
+  const box = document.getElementById("message");
+  box.textContent = text;
+  box.style.display = "block";
+  setTimeout(() => box.style.display = "none", 2500);
+}
+
+function changeRole() {
+  role = document.getElementById("role").value;
+
+  document.getElementById("welcomeText").textContent =
+    "Logged in as " + role + ". Manage your college activities.";
+
+  document.getElementById("requestSection").classList.toggle(
+    "hidden", false
+  );
+
+  render();
+  message("Role changed to " + role);
+}
+
+function showPage(page, element) {
+  document.querySelectorAll(".page").forEach(p =>
+    p.classList.add("hidden")
+  );
+
+  document.getElementById(page).classList.remove("hidden");
+
+  document.querySelectorAll(".nav").forEach(n =>
+    n.classList.remove("active")
+  );
+
+  element.classList.add("active");
+
+  if(page === "classrooms") renderRooms();
+  if(page === "timetable") renderTimetable();
+  if(page === "swaps") renderSwaps();
+}
+
+function render() {
+  const dept = document.getElementById("department").value;
+  const year = document.getElementById("year").value;
+  const div = document.getElementById("division").value;
+
+  document.getElementById("selection").textContent =
+    Selected: ${dept} / ${year} / Division ${div};
+
+  const filtered = lectures.filter(l =>
+    l.department === dept &&
+    l.year === year &&
+    l.division === div
+  );
+
+  document.getElementById("liveCount").textContent =
+    lectures.filter(l => l.status === "Live").length;
+
+  document.getElementById("swapCount").textContent =
+    swaps.filter(s => s.status === "Pending").length;
+
+  const box = document.getElementById("currentLecture");
+
+  if(filtered.length === 0) {
+    box.innerHTML = '<p class="muted">No sample timetable available for this selection.</p>';
+    return;
+  }
+
+  box.innerHTML = filtered.map(l => `
+    <div class="notice">
+      <strong>${l.subject}</strong><br><br>
+      Teacher: ${l.teacher}<br>
+      Room: ${l.room}<br>
+      Time: ${l.time}<br><br>
+      <span class="status ${l.status === "Live" ? "live" : ""}">
+        ${l.status}
+      </span>
+      <br><br>
+      ${role !== "Principal" ? `
+        <button class="action"
+          onclick="startLecture(${lectures.indexOf(l)})"
+          ${l.status === "Live" || l.status === "Completed" ? "disabled" : ""}>
+          Start Lecture
+        </button>
+        <button class="action secondary"
+          onclick="endLecture(${lectures.indexOf(l)})"
+          ${l.status !== "Live" ? "disabled" : ""}>
+          End Lecture
+        </button>
+      ` : ""}
+    </div>
+  `).join("");
+}
+
+function startLecture(index) {
+  const lecture = lectures[index];
+
+  if(lecture.status === "Live" ||
+     lecture.status === "Completed") return;
+
+  lecture.status = "Live";
+  lecture.startedAt = new Date().toLocaleTimeString();
+
+  notify(${lecture.teacher} started ${lecture.subject} in Room ${lecture.room}.);
+  message("Lecture started successfully!");
+  render();
+  renderRooms();
+}
+
+function endLecture(index) {
+  const lecture = lectures[index];
+
+  if(lecture.status !== "Live") return;
+
+  lecture.status = "Completed";
+  lecture.endedAt = new Date().toLocaleTimeString();
+
+  notify(${lecture.subject} in Room ${lecture.room} has ended.);
+  message("Lecture ended!");
+  render();
+  renderRooms();
+}
+
+function renderRooms() {
+  const dept = document.getElementById("roomDept").value;
+
+  const filtered = lectures.filter(l =>
+    l.department === dept
+  );
+
+  document.getElementById("rooms").innerHTML =
+    filtered.length ? filtered.map(l => `
+      <div class="notice">
+        <strong>Room ${l.room}</strong> — ${l.division}<br><br>
+        ${l.subject}<br>
+        Teacher: ${l.teacher}<br>
+        Time: ${l.time}<br><br>
+        <span class="status ${l.status === "Live" ? "live" : ""}">
+          ${l.status}
+        </span>
+      </div>
+    `).join("") :
+    '<p class="muted">No classroom records available.</p>';
+}
+
+function renderTimetable() {
+  const rows = [
+    ["09:00 - 10:00","Mathematics","Electronics","Physics","Mathematics","Programming"],
+    ["10:00 - 11:00","Electronics","Mathematics","Programming","Physics","Electronics"],
+    ["11:00 - 12:00","Physics","Programming","Mathematics","Electronics","Physics"],
+    ["12:00 - 01:00","Lunch Break","Lunch Break","Lunch Break","Lunch Break","Lunch Break"],
+    ["01:00 - 02:00","Programming","Physics","Electronics","Programming","Mathematics"]
+  ];
+
+  document.getElementById("timetableBody").innerHTML =
+    rows.map(row => `
+      <tr>${row.map(cell => <td>${cell}</td>).join("")}</tr>
+    `).join("");
+}
+
+function requestSwap() {
+  const from = document.getElementById("fromTeacher").value;
+  const to = document.getElementById("toTeacher").value;
+  const division = document.getElementById("swapDivision").value;
+
+  if(from === to) {
+    message("Choose two different teachers.");
+    return;
+  }
+
+  swaps.push({
+    from,
+    to,
+    division,
+    status:"Pending"
+  });
+
+  notify(${from} requested a lecture swap with ${to} for ${division}.);
+
+  renderSwaps();
+  render();
+  message("Swap request submitted!");
+}
+
+function renderSwaps() {
+  const box = document.getElementById("swapRequests");
+
+  if(swaps.length === 0) {
+    box.innerHTML = '<p class="muted">No swap requests yet.</p>';
+    return;
+  }
+
+  box.innerHTML = swaps.map((s,i) => `
+    <div class="notice">
+      <strong>${s.from}</strong> ⇄ <strong>${s.to}</strong><br><br>
+      Division: ${s.division}<br>
+      Status: <span class="status ${s.status === "Approved" ? "live" : "pending"}">${s.status}</span>
+      <br><br>
+      ${role === "HOD" || role === "Principal" ?
+        s.status === "Pending" ?
+        `<button class="action" onclick="approveSwap(${i})">Approve</button>
+         <button class="action secondary" onclick="rejectSwap(${i})">Reject</button>`
+        : "" : ""}
+    </div>
+  `).join("");
+}
+
+function approveSwap(index) {
+  swaps[index].status = "Approved";
+  notify(Swap between ${swaps[index].from} and ${swaps[index].to} approved.);
+  renderSwaps();
+  render();
+  message("Swap approved!");
+}
+
+function rejectSwap(index) {
+  swaps[index].status = "Rejected";
+  notify(Swap request between ${swaps[index].from} and ${swaps[index].to} rejected.);
+  renderSwaps();
+  render();
+  message("Swap rejected.");
+}
+
+// INITIALIZE
+
+render();
+renderRooms();
+renderTimetable();
+renderSwaps();
+
+</script>
+
+</body>
+</html>
